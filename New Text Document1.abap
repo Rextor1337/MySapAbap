@@ -1,0 +1,35 @@
+
+REPORT ZBK_ARITMETIKHESAP_03.
+
+PARAMETERS: pa_int1 type int3,
+            pa_op type c LENGTH 2,
+            pa_int2 type int3.
+
+
+Data:gv_result type p length 10 decimals 2.
+if  pa_op = '+' or
+    pa_op = '-' or
+    pa_op = '*' or
+    pa_op = '**' or
+    pa_op = '/' and pa_int2 <> 0.
+
+  case pa_op.
+      when '+'.
+      gv_result = pa_int1 + pa_int2.
+      when '-'.
+      gv_result = pa_int1 - pa_int2.
+      when '*'.
+      gv_result = pa_int1 * pa_int2.
+      when '/'.
+      gv_result = pa_int1 / pa_int2.
+      when '**'.
+      gv_result = pa_int1 ** pa_int2.
+      when others.
+        write: 'Gecersiz islem'.
+        endcase.
+        write:'Sonuc: ' , pa_int1 , pa_op , pa_int2, ' = ' , gv_result.
+  elseif pa_op = '/' and pa_int2 = 0.
+    write: 'Sayi 0 a bolunemez'.
+
+
+  endif.
