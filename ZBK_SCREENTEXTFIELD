@@ -1,0 +1,134 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_SCREENTEXTFIELD
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_SCREENTEXTFIELD.
+
+DATA: gv_ad type char20,
+    gv_soyad type char20.
+
+DATA: gv_rad1 type char1,
+      gv_rad2 type xfeld.
+
+DATA gv_box type xfeld.
+
+DATA: gv_drop type i.
+
+DATA: gv_id type vrm_id,
+      gv_values type vrm_values,
+      gv_value type vrm_value.
+
+DATA: gv_index type i.
+
+DATA: gv_date type datum.
+
+DATA: gs_log type ZBK_SCREENTABLE.
+
+DATA: ok_code type sy-ucomm.
+
+
+
+START-OF-SELECTION.
+
+gv_id = 'gv_drop'.
+gv_index = 18.
+DO 60 times.
+  gv_value-key = gv_index.
+  gv_value-text = gv_index.
+  append gv_value to gv_values.
+  gv_index = gv_index + 1.
+  enddo.
+
+
+CALL SCREEN 0100.
+*&---------------------------------------------------------------------*
+*& Module STATUS_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+
+
+
+
+
+
+
+
+
+
+
+MODULE STATUS_0100 OUTPUT.
+ SET PF-STATUS '0100'.
+* SET TITLEBAR 'xxx'.
+ CALL FUNCTION 'VRM_SET_VALUES'
+   EXPORTING
+     ID                    = gv_id
+     VALUES                = gv_values.
+
+
+
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+
+**  CASE sy-ucomm.
+case ok_code.
+    when '&BACK'.
+      leave to screen 0.
+      when '&CLEAR'.
+        perform clear_data.
+      when '&SAVE'.
+        perform save_data.
+        endcase.
+
+
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*& Form CLEAR_DATA
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM CLEAR_DATA .
+CLEAR:gv_ad,
+        gv_soyad,
+        gv_drop,
+        gv_box,
+        gv_date,
+        gv_rad2.
+        gv_rad1 = abap_true.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form SAVE_DATA
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM SAVE_DATA .
+     gs_log-AD = GV_AD.
+        gs_log-SOYAD = GV_SOYAD.
+        gs_log-CBOX = GV_BOX.
+        gs_log-YAS = GV_DROP.
+        gs_log-ZDATE = GV_DATE.
+        if gv_rad1 eq abap_true.
+          gs_log-CINSIYET = 'K'.
+          else.
+            gs_log-CINSIYET = 'E'.
+            endif.
+            insert ZBK_SCREENTABLE from gs_log.
+            commit work and wait.
+
+            message 'Veriler tabloya kaydedilmistir' type 'I' display like 's'.
+
+ENDFORM.

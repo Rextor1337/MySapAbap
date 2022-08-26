@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_OOALV
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_OOALV.
+include ZBK_OOALV_top.
+include ZBK_OOALV_cls.
+
+include ZBK_OOALV_pbo.
+include ZBK_OOALV_pai.
+include ZBK_OOALV_frm.
+
+START-OF-SELECTION.
+
+perform get_data.
+perform set_fcat.
+perform set_layout.
+
+
+
+
+
+  call screen 0100.

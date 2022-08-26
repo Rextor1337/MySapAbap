@@ -1,0 +1,52 @@
+
+TYPE-POOLS icon.
+
+TABLES: SCARR.
+
+DATA: go_grid type ref to cl_gui_alv_grid,
+      GO_CONT type REF TO CL_GUI_CUSTOM_CONTAINER.
+
+*DATA:BEGIN OF gt_scarr OCCURS 0,
+*         CARRID   type SCARR-CARRID   ,
+*         CARRNAME type SCARR-CARRNAME ,
+*         CURRCODE type SCARR-CURRCODE ,
+*         URL      type SCARR-URL      ,
+*       END OF gt_scarr.
+
+TYPES: BEGIN OF gty_scarr,
+*         icon1    type icon_d,
+         CARRID   type S_CARR_ID,
+         CARRNAME type S_CARRNAME,
+         CURRCODE type S_CURRCODE,
+         URL      type  S_CARRURL,
+*         cost     type  int4,
+*         location type char20,
+*         seatl    type char1,
+*         seatp    type char10,
+*         dd_handle    type int4,
+*          cellstyle type lvc_t_styl,
+*          styleval type char8,
+       END OF gty_scarr.
+
+*       DATA: gs_cellstyle type lvc_s_styl.
+
+*DATA: gs_cell_color type lvc_s_scol.
+
+DATA: gt_scarr  TYPE table of gty_scarr,
+      gs_scarr  TYPE  gty_scarr,
+      gt_fcat   type lvc_t_fcat,
+      gs_fcat   type LVC_S_FCAT,
+      gs_layout type lvc_s_layo.
+
+DATA: go_spli type ref to CL_GUI_SPLITTER_CONTAINER,
+      go_sub1 type ref to CL_GUI_CONTAINER,
+      go_sub2 type ref to CL_GUI_CONTAINER,
+      go_docu type ref to CL_DD_DOCUMENT.
+
+*DATA: go_docu type ref to CL_DD_DOCUMENT.
+
+*FIELD-SYMBOLS: <gfs_fc>    type LVC_S_FCAT,
+*               <gfs_scarr> type gty_scarr.
+
+class CL_EVENT_RECIEVER DEFINITION DEFERRED.
+DATA: go_event_reciever type ref to CL_EVENT_RECIEVER.

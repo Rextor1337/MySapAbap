@@ -1,0 +1,45 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_DEBBUGGING
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_DEBBUGGING.
+
+DATA: gv_index type i,
+    gv_mod2 type i,
+    gv_mod3 type i.
+
+START-OF-SELECTION.
+
+    gv_index = 0.
+
+DO 10 TIMES.
+  if gv_index mod 2 eq 0.
+    gv_mod2 = gv_mod2 + 1.
+    endif.
+    if gv_index mod 3 eq 0.
+      gv_mod3 = gv_mod3 + 1.
+    endif.
+    gv_index = gv_index + 1.
+    enddo.
+
+    WRITE:/  '2 YE BOLUNEN SAYI ADEDI:' , gv_mod2.
+    WRITE:/  '3 YE BOLUNEN SAYI ADEDI:' , gv_mod3.
+
+
+*DATA: gv_num1 type i,
+*      gv_num2 type i.
+*
+*
+*
+*START-OF-SELECTION.
+*
+*gv_num1 = 10.
+*gv_num1 = gv_num1 + 1.
+*gv_num1 = gv_num1 + 1.
+*gv_num1 = gv_num1 + 1.
+*
+*gv_num2 = 5.
+*gv_num2 = gv_num1 + gv_num2.
+*
+*WRITE: gv_num1 , gv_num2.

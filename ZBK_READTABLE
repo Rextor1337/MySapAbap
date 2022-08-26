@@ -1,0 +1,25 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_READTABLE
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_READTABLE.
+
+DATA: gt_scarr type table of scarr,
+      gs_scarr type scarr.
+
+START-OF-SELECTION.
+
+  select * from scarr
+    into table gt_scarr.
+
+*  read table gt_scarr into gs_scarr index 4.
+*
+*  write: gs_scarr.
+
+*  read table gt_scarr into gs_scarr with key carrid = 'AZ'.
+*  read table gt_scarr into gs_scarr with key carrname = 'Alitalia'.
+  read table gt_scarr into gs_scarr with key currcode = 'EUR'
+  CARRNAME = 'Alitalia'.
+
+  write: gs_scarr.

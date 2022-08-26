@@ -1,0 +1,94 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_SALVDENEME
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_SALVDENEME.
+
+*DATA: gt_sbook type table of sbook,
+*go_salv type ref to cl_salv_table.
+*
+*START-OF-SELECTION.
+*
+*select * up to 30 rows from sbook
+*  into table gt_sbook.
+*
+*cl_salv_table=>factory(
+*  IMPORTING
+*    R_SALV_TABLE   = go_salv
+*  CHANGING
+*    T_TABLE        = gt_sbook
+*).
+*
+*  go_salv->DISPLAY( ).
+
+DATA: gt_sbook type table of sbook,
+go_salv type ref to cl_salv_table.
+
+START-OF-SELECTION.
+
+select * up to 30 rows from sbook
+  into table gt_sbook.
+
+cl_salv_table=>factory(
+  IMPORTING
+    R_SALV_TABLE   = go_salv
+  CHANGING
+    T_TABLE        = gt_sbook
+).
+  DATA: lo_display type ref to cl_salv_display_settings.
+  LO_DISPLAY = GO_SALV->GET_DISPLAY_SETTINGS( ).
+  LO_DISPLAY->set_list_header( VALUE = 'SALV DENEME TABLOSU').
+  LO_DISPLAY->SET_STRIPED_PATTERN( VALUE = 'X' ).
+
+  DATA: lo_cols type REF TO cl_salv_columns.
+  lo_cols = go_salv->GET_COLUMNS( ).
+  LO_COLS->SET_OPTIMIZE(
+      VALUE = 'X'
+  ).
+  DATA: LO_COL TYPE REF TO cl_salv_column.
+TRY.
+  LO_COL = LO_COLS->GET_COLUMN( COLUMNNAME = 'INVOICE' ).
+  LO_COL->SET_LONG_TEXT( 'Yeni Fatura Duzenleyici' ).
+  LO_COL->SET_MEDIUM_TEXT( 'Yeni Fatura D.' ).
+  LO_COL->SET_short_TEXT( 'Yeni Fat.' ).
+  CATCH cx_salv_not_found.
+  endtry.
+
+  TRY.
+  LO_COL = LO_COLS->GET_COLUMN( COLUMNNAME = 'MANDT' ).
+  LO_COL->SET_VISIBLE(
+      VALUE = IF_SALV_C_BOOL_SAP=>false
+  ).
+  CATCH cx_salv_not_found.
+  endtry.
+
+  DATA: lo_func TYPE REF TO cl_salv_functions.
+  LO_FUNC = go_salv->GET_FUNCTIONS( ).
+  LO_FUNC->SET_ALL( abap_true ).
+
+  DATA:lo_header type REF TO cl_salv_form_layout_grid,
+        lo_h_label TYPE REF TO cl_salv_form_label,
+        lo_h_flow TYPE REF TO cl_salv_form_layout_flow.
+  create OBJECT lo_header.
+  lo_h_label = lo_header->CREATE_LABEL(
+                 ROW         = 1
+                 COLUMN      = 1
+               ).
+  lo_h_label->SET_TEXT( VALUE = 'Baslik Ilk Satir' ).
+  lo_h_flow = lo_header->create_flow( row = 2  column = 1 ).
+  lo_h_flow->CREATE_TEXT(
+    EXPORTING
+      TEXT     = 'Baslik Ikinci satir'
+  ).
+  go_salv->SET_TOP_OF_LIST( value = lo_header ).
+
+  go_salv->SET_SCREEN_POPUP(
+    EXPORTING
+      START_COLUMN = 10
+      END_COLUMN   = 75
+      START_LINE   = 5
+      END_LINE     = 25
+  ).
+
+  go_salv->DISPLAY( ).

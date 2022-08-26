@@ -1,0 +1,92 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_DINAMICSCREEN
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_DINAMICSCREEN.
+
+DATA:gv_name type char20,
+gv_surname type char30,
+gv_age type num4.
+
+DATA: gv_flag type xfeld.
+
+START-OF-SELECTION.
+
+call screen 0100.
+*&---------------------------------------------------------------------*
+*& Module STATUS_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE STATUS_0100 OUTPUT.
+
+ SET PF-STATUS '0100'.
+
+ loop at screen.
+
+
+
+   if gv_flag eq abap_true.
+     if screen-group1 eq abap_true.
+       screen-input = 0.
+       MODIFY SCREEN.
+       endif.
+     endif.
+
+     if gv_flag eq abap_false.
+       if screen-group1 eq abap_false.
+         screen-input = 1.
+         modify screen.
+         endif.
+       endif.
+
+   endloop.
+
+* LOOP AT SCREEN.
+*   if screen-name eq 'gv_name'.
+*     screen-active = 0.
+*     MODIFY SCREEN.
+*     endif.
+*
+*     if screen-name eq 'gv_surname'.
+*     screen-invisible = 1.
+*     MODIFY SCREEN.
+*     endif.
+*
+*     if screen-name eq 'gv_age'.
+*     screen-input = 0.
+*     MODIFY SCREEN.
+*     endif.
+*
+*
+*     endloop.
+
+*   LOOP AT SCREEN.
+*     if screen-group1 eq 'X'.
+*     screen-input = 0.
+*     modify screen.
+*     endif.
+*
+*     endloop.
+
+
+endmodule.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+
+  case sy-ucomm.
+    when '&BACK'.
+      set screen 0.
+
+        when '&ENABLE'.
+          gv_flag = abap_true.
+          when '&DISABLE'.
+        gv_flag = abap_false.
+      endcase.
+
+ENDMODULE.

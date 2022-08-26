@@ -1,0 +1,43 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_JOINLER_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_JOINLER_01.
+
+
+
+
+types:begin of gty_urunler,
+  URUN_ID type ZBK_URUNID_DE,
+  URUN_ISIM type ZBK_URUNISMI_DE,
+  URUN_FIYAT type ZBK_URUNFIYAT_DE,
+  URUN_KDV_FIYAT type ZBK_URUNKDVFIYAT_DE,
+  URUN_ADET type ZBK_URUNADET_DE,
+  URUN_YENI_FIYAT TYPE ZBK_URUNYENIFIYAT_DE,
+
+
+  end of gty_urunler.
+
+  DATA: gt_urunler type table of gty_urunler.
+START-OF-SELECTION.
+
+*CALL FUNCTION 'Z_BK_FONK_01'
+* EXPORTING
+*  IV_NUM1      = URUN_FIYAT
+* IV_NUM2        = 2
+* IMPORTING
+* EV_SONUC      = URUN_YENI_FIYAT
+          .
+
+
+
+select * from ZBK_URUN_T
+  into CORRESPONDING FIELDS OF table gt_urunler.
+
+
+select * from ZBK_URUN_T
+ INNER JOIN ZBK_URUNADED_T ON ZBK_URUNADED_T~URUN_ID EQ ZBK_URUN_T~URUN_ID
+  into CORRESPONDING FIELDS OF table gt_urunler.
+
+  break-point.

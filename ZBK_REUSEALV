@@ -1,0 +1,53 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_REUSEALV
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_REUSEALV.
+
+INCLUDE ZBK_REUSEALV_top.
+INCLUDE ZBK_REUSEALV_frm.
+
+initialization.
+gs_variant_get-REPORT = sy-repid.
+  CALL FUNCTION 'REUSE_ALV_VARIANT_DEFAULT_GET'
+
+    CHANGING
+      CS_VARIANT          = gs_variant_get
+   EXCEPTIONS
+     WRONG_INPUT         = 1
+     NOT_FOUND           = 2
+     PROGRAM_ERROR       = 3
+     OTHERS              = 4
+            .
+  IF SY-SUBRC <> 0.
+ p_vari = GS_VARIANT_GET-VARIANT.
+  ENDIF.
+
+  AT SELECTION-SCREEN on VALUE-REQUEST FOR p_vari.
+    gs_variant_get-REPORT = sy-repid.
+    CALL FUNCTION 'REUSE_ALV_VARIANT_F4'
+      EXPORTING
+        IS_VARIANT                = GS_VARIANT_GET
+     IMPORTING
+       E_EXIT                    = gv_exit
+       ES_VARIANT                = GS_VARIANT_GET
+     EXCEPTIONS
+       NOT_FOUND                 = 1
+       PROGRAM_ERROR             = 2
+       OTHERS                    = 3
+              .
+    IF SY-SUBRC eq 0.
+ if gv_exit is initial.
+   p_vari = GS_VARIANT_GET-variant.
+   endif.
+    ENDIF.
+
+
+
+START-OF-SELECTION.
+
+  PERFORM get_data.
+  PERFORM get_fc.
+  PERFORM get_layout.
+  PERFORM display_alv.

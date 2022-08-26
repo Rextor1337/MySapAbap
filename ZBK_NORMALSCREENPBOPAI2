@@ -1,0 +1,41 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_NORMALSCREENPBOPAI2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_NORMALSCREENPBOPAI2.
+
+START-OF-SELECTION.
+CALL SCREEN 0100.
+
+*&---------------------------------------------------------------------*
+*& Module STATUS_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE STATUS_0100 OUTPUT.
+ SET PF-STATUS '0100'.
+ SET TITLEBAR 'xxx'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+  DATA: iv_text TYPE char200.
+
+  CONCATENATE sy-ucomm
+  'butonuna basilmistir'
+  into iv_text
+  SEPARATED BY space.
+
+  MESSAGE iv_text TYPE 'I'.
+
+  CASE sy-ucomm.
+    WHEN '&BCK'.
+      leave to screen 0.
+      endcase.
+
+
+ENDMODULE.

@@ -1,0 +1,325 @@
+
+FORM DISPLAY_ALV .
+  if go_grid is initial.
+    create object GO_CONT
+      EXPORTING
+        CONTAINER_NAME = 'CC_ALV'.
+
+
+    create object GO_SPLI
+      EXPORTING
+        PARENT  = GO_CONT
+        ROWS    = 2
+        COLUMNS = 1.
+
+
+    call method GO_SPLI->GET_CONTAINER
+      EXPORTING
+        ROW       = 1               " Row
+        COLUMN    = 1             " Column
+      RECEIVING
+        CONTAINER = go_sub1.              " Container
+
+
+    call method GO_SPLI->GET_CONTAINER
+      EXPORTING
+        ROW       = 2               " Row
+        COLUMN    = 1             " Column
+      RECEIVING
+        CONTAINER = go_sub2.            " Container
+
+    call method GO_SPLI->SET_ROW_HEIGHT
+      EXPORTING
+        ID     = 1               " Row ID
+        HEIGHT = 15.              " Height
+
+    create object GO_DOCU
+      EXPORTING
+        STYLE = 'ALV_GRID'.                             " 'X': Document Created Without Free Margins
+
+    create object GO_GRID
+      EXPORTING
+        I_PARENT = GO_sub2.
+
+
+
+    create object GO_EVENT_RECIEVER.
+    set HANDLER GO_EVENT_RECIEVER->HANDLE_TOP_OF_PAGE for go_grid.
+
+    call method go_grid->SET_TABLE_FOR_FIRST_DISPLAY
+      EXPORTING
+        IS_LAYOUT       = GS_LAYOUT
+      CHANGING
+        IT_OUTTAB       = gt_scarr[]
+        IT_FIELDCATALOG = GT_fcat.
+
+
+
+    call method go_grid->LIST_PROCESSING_EVENTS
+      EXPORTING
+        I_EVENT_NAME = 'TOP_OF_PAGE'               " Event Name List Processing
+        I_DYNDOC_ID  = GO_DOCU.             " Dynamic Document
+  else.
+    call method go_grid->REFRESH_TABLE_DISPLAY.
+  endif.
+
+
+ENDFORM.
+
+FORM GET_DATA .
+
+  DATA: lv_numc   type n length 8,
+        lv_numc_c type char8.
+
+  select * from scarr
+    into CORRESPONDING FIELDS OF table gt_scarr.
+
+
+*
+*  loop at gt_scarr ASSIGNING <GFS_SCARR>.
+*    LV_NUMC = LV_NUMC + 1.
+*    LV_NUMC_C = LV_NUMC.
+*
+*    GS_CELLSTYLE-FIELDNAME = 'URL'.
+*    GS_CELLSTYLE-STYLE = LV_NUMC_C.
+*    append GS_CELLSTYLE to <gfs_scarr>-CELLSTYLE .
+*
+*    <GFS_SCARR>-STYLEVAL = LV_NUMC_C.
+
+*  ENDLOOP.
+*  loop at gt_scarr ASSIGNING <gfs_scarr>.
+*    if <GFS_SCARR>-CURRCODE <> 'EUR'.
+*      clear: GS_CELLSTYLE.
+*      GS_CELLSTYLE-FIELDNAME = 'URL'.
+*      GS_CELLSTYLE-STYLE = cl_gui_alv_grid=>MC_STYLE_DISABLED.
+*      append GS_CELLSTYLE to <gfs_scarr>-CELLSTYLE .
+*    endif.
+*  endloop.
+
+*  loop at gt_scarr ASSIGNING <gfs_scarr>.
+*    case <gfs_scarr>-CURRCODE.
+*      when 'EUR'.
+*        <gfs_scarr>-DD_HANDLE = '3'.
+*      when 'USD'.
+*        <gfs_scarr>-DD_HANDLE = '4'.
+*      when 'JPY'.
+*        <gfs_scarr>-DD_HANDLE = '5'.
+*
+*    ENDCASE.
+*  ENDLOOP.
+
+
+
+ENDFORM.
+
+FORM SET_FCAT .
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'ICON1'.
+*  gs_fcat-SCRTEXT_S = 'ICON'.
+*  gs_fcat-SCRTEXT_M = 'ICON'.
+*  gs_fcat-SCRTEXT_L = 'ICON'.
+**  gs_fcat-COL_POS = '2'.
+**  gs_fcat-KEY = 'X'.
+*  append GS_FCAT to GT_FCAT.
+
+  clear: gs_fcat.
+  gs_fcat-FIELDNAME = 'CARRID'.
+  gs_fcat-SCRTEXT_S = 'Airline C.'.
+  gs_fcat-SCRTEXT_M = 'Airline Code'.
+  gs_fcat-SCRTEXT_L = 'Airline Code'.
+*  gs_fcat-COL_POS = '2'.
+*  gs_fcat-KEY = 'X'.
+  append GS_FCAT to GT_FCAT.
+
+  clear: gs_fcat.
+  gs_fcat-FIELDNAME = 'CARRNAME'.
+  gs_fcat-SCRTEXT_S = 'Airline N.'.
+  gs_fcat-SCRTEXT_M = 'Airline Name'.
+  gs_fcat-SCRTEXT_L = 'Airline Name'.
+*  gs_fcat-COL_POS = '1'.
+*  gs_fcat-COL_OPT = 'X'.
+*  gs_fcat-EDIT = 'X'.
+  append GS_FCAT to GT_FCAT.
+
+  clear: gs_fcat.
+  gs_fcat-FIELDNAME = 'CURRCODE'.
+  gs_fcat-SCRTEXT_S = 'Local C.'.
+  gs_fcat-SCRTEXT_M = 'Local Currency '.
+  gs_fcat-SCRTEXT_L = 'Local Currency of Airline'.
+*  gs_fcat-COL_POS = '3'.
+  append GS_FCAT to GT_FCAT.
+
+  clear: gs_fcat.
+  gs_fcat-FIELDNAME = 'URL'.
+  gs_fcat-SCRTEXT_S = 'URL'.
+  gs_fcat-SCRTEXT_M = 'Airline URL '.
+  gs_fcat-SCRTEXT_L = 'Airline URL'.
+*  gs_fcat-EDIT = 'X'.
+*  gs_fcat-COL_POS = '4'.
+*  gs_fcat-COL_OPT = 'X'.
+*  gs_fcat-HOTSPOT = 'X'.
+  append GS_FCAT to GT_FCAT.
+*
+*    clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'STYLEVAL'.
+*  gs_fcat-SCRTEXT_S = 'Style'.
+*  gs_fcat-SCRTEXT_M = 'Style'.
+*  gs_fcat-SCRTEXT_L = 'Style'.
+*  append GS_FCAT to GT_FCAT.
+
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'COST'.
+*  gs_fcat-SCRTEXT_S = 'COST'.
+*  gs_fcat-SCRTEXT_M = 'COST'.
+*  gs_fcat-SCRTEXT_L = 'COST'.
+*  gs_fcat-edit = 'X'.
+*  append GS_FCAT to GT_FCAT.
+*
+*
+*
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'LOCATION'.
+*  gs_fcat-SCRTEXT_S = 'LOC.'.
+*  gs_fcat-SCRTEXT_M = 'LOCATION'.
+*  gs_fcat-SCRTEXT_L = 'LOCATION'.
+*  gs_fcat-edit = 'X'.
+*  gs_fcat-DRDN_HNDL = 1.
+*  append GS_FCAT to GT_FCAT.
+*
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'SEATL'.
+*  gs_fcat-SCRTEXT_S = 'SEAT'.
+*  gs_fcat-SCRTEXT_M = 'SEAT'.
+*  gs_fcat-SCRTEXT_L = 'SEAT'.
+*  gs_fcat-edit = 'X'.
+*  gs_fcat-DRDN_HNDL = 2.
+*  append GS_FCAT to GT_FCAT.
+*
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'SEATP'.
+*  gs_fcat-SCRTEXT_S = 'SEAT P.'.
+*  gs_fcat-SCRTEXT_M = 'SEAT POS.'.
+*  gs_fcat-SCRTEXT_L = 'SEAT POSITION'.
+*  gs_fcat-edit = 'X'.
+*  gs_fcat-DRDN_FIELD = 'DD_HANDLE'.
+*  append GS_FCAT to GT_FCAT.
+
+*  clear: gs_fcat.
+*  gs_fcat-FIELDNAME = 'MES'.
+*  gs_fcat-SCRTEXT_S = 'MES.'.
+*  gs_fcat-SCRTEXT_M = 'MESSAGE '.
+*  gs_fcat-SCRTEXT_L = 'MESSAGE'.
+*  gs_fcat-COL_POS = '5'.
+*  gs_fcat-OUTPUTLEN = 50.
+*  gs_fcat-edit = 'X'.
+**  gs_fcat-HOTSPOT = 'X'.
+*  append GS_FCAT to GT_FCAT.
+
+ENDFORM.
+
+FORM SET_LAYOUT .
+
+  clear: GS_LAYOUT.
+  GS_LAYOUT-CWIDTH_OPT = abap_true.
+  GS_LAYOUT-ZEBRA = abap_true.
+*  GS_LAYOUT-STYLEFNAME = 'CELLSTYLE'.
+*  GS_LAYOUT-INFO_FNAME = 'LINE_COLOR'.
+*  GS_LAYOUT-CTAB_FNAME = 'CELL_COLOR'.
+
+ENDFORM.
+
+*FORM GET_TOTAL_SUM .
+*  DATA: lv_total_sum type int4,
+*        lv_lines     type int4,
+*        lv_avr       type int4.
+*
+*  loop at gt_scarr into gs_scarr.
+*    LV_TOTAL_SUM = LV_TOTAL_SUM + GS_SCARR-COST.
+*  endloop.
+*
+*  DESCRIBE TABLE gt_scarr lines LV_LINES.
+*
+*  lv_avr = LV_TOTAL_SUM / LV_LINES.
+*
+*  loop at GT_SCARR ASSIGNING <gfs_scarr>.
+*    if <GFS_SCARR>-COST > lv_avr.
+*      <GFS_SCARR>-ICON1 = '@0A@'.
+*    elseif <GFS_SCARR>-COST < lv_avr.
+*      <GFS_SCARR>-ICON1 = '@08@'.
+*    else.
+*      <GFS_SCARR>-ICON1 = '@09@'.
+*    endif.
+*  endloop.
+*
+*ENDFORM.
+
+*FORM SET_DROPDOWN .
+*  DATA: lt_dropdown type lvc_t_drop,
+*        ls_dropdown type lvc_s_drop.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 1.
+*  LS_DROPDOWN-VALUE = 'Abroad'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 1.
+*  LS_DROPDOWN-VALUE = 'Domestic'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 2.
+*  LS_DROPDOWN-VALUE = 'A'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 2.
+*  LS_DROPDOWN-VALUE = 'B'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 2.
+*  LS_DROPDOWN-VALUE = 'C'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 2.
+*  LS_DROPDOWN-VALUE = 'D'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 3.
+*  LS_DROPDOWN-VALUE = 'Frontside'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 3.
+*  LS_DROPDOWN-VALUE = 'Middle'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 3.
+*  LS_DROPDOWN-VALUE = 'Backside'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 4.
+*  LS_DROPDOWN-VALUE = 'Frontside'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 4.
+*  LS_DROPDOWN-VALUE = 'Backside'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*  clear: LS_DROPDOWN.
+*  LS_DROPDOWN-HANDLE = 5.
+*  LS_DROPDOWN-VALUE = 'Middle'.
+*  append LS_DROPDOWN to LT_DROPDOWN.
+*
+*
+*  go_alv->SET_DROP_DOWN_TABLE(
+*    EXPORTING
+*      IT_DROP_DOWN       = LT_DROPDOWN       ).
+*
+*ENDFORM.

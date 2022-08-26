@@ -1,0 +1,31 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_ARITMETIKHESAP_04
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_ARITMETIKHESAP_04.
+
+DATA: go_class type ref to Z_CL_EGITIM.
+
+Parameters:gv_num11 type int4,
+      gv_num22 type int4,
+      gv_result1 type int.
+
+Data:
+      gv_num1 type int4,
+      gv_num2 type int4,
+      gv_result type int4.
+
+START-OF-SELECTION.
+
+create object go_class.
+
+go_class->SUM_NUMBERS(
+  EXPORTING
+    IV_NUM1   =   gv_num1               " ilk sayi
+    IV_NUM2   =    gv_num2             " ikinci sayi
+    IMPORTING
+    EV_RESULT =     gv_result             " sonuc
+).
+
+write: gv_result.

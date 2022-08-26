@@ -1,0 +1,50 @@
+
+          .
+
+REPORT ZBK_ARITMETIKHESAP_02.
+
+DATA: gv_num1 TYPE int4,
+      gv_num2 TYPE int4,
+      gv_num3 TYPE int4,
+      gv_num4 TYPE int4,
+      gv_num5 TYPE int4,
+      gv_num6 TYPE int4,
+      gv_num7 TYPE int4,
+      gv_num8 TYPE int4,
+      gv_result1 Type int4,
+      gv_result2 Type int4,
+      gv_result3 Type int4,
+      gv_result4 Type int4,
+      gv_mes type char20.
+
+
+
+
+
+START-OF-SELECTION.
+CALL FUNCTION 'Z_BK_EGITIM_ARIT'
+  EXPORTING
+    IV_NUM1               = gv_num1
+    IV_NUM2               = gv_num2
+    IV_NUM3               = gv_num3
+    IV_NUM4               = gv_num4
+    IV_NUM5               = gv_num5
+    IV_NUM6               = gv_num6
+    IV_NUM7               = gv_num7
+    IV_NUM8               = gv_num8
+ IMPORTING
+   EV_RESULT1            = gv_result1
+   EV_RESULT2            = gv_result2
+   EV_RESULT3            = gv_result3
+   EV_RESULT4            = gv_result4
+  CHANGING
+      CV_MES                = gv_mes
+     EXCEPTIONS
+       DIVIDED_BY_ZERO       = 1
+       OTHERS                = 2
+
+      IF SY-SUBRC eq 0.
+write : / 'Sonuc' , GV_RESULT1.
+ELSEIF sy-subrc eq 1.
+  write: / 'sifira bolemezsiniz'.
+ENDIF.

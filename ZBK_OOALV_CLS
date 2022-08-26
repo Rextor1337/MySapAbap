@@ -1,0 +1,84 @@
+*&---------------------------------------------------------------------*
+*& Include          ZBK_OOALV_CLS
+*&---------------------------------------------------------------------*
+class cl_event_reciever definition.
+  public section.
+
+    METHODS handle_top_of_page
+        for event top_of_page of cl_gui_alv_grid
+      importing
+        e_dyndoc_id
+        table_index.
+    METHODS handle_hotspot_click
+        for event hotspot_click  of cl_gui_alv_grid
+      importing
+        e_row_id
+        e_column_id.
+    METHODS handle_double_click
+        for event double_click  of cl_gui_alv_grid
+      importing
+        e_row
+        e_column
+        es_row_no.
+    METHODS handle_data_changed
+        for event data_changed  of cl_gui_alv_grid
+      importing
+        er_data_changed
+        e_onf4
+        e_onf4_before
+        e_onf4_after
+        e_ucomm.
+    METHODS handle_onf4
+        for event onf4  of cl_gui_alv_grid
+      importing
+        e_fieldname
+        e_fieldvalue
+        es_row_no
+        er_event_data
+        et_bad_cells
+        e_display.
+
+endclass.
+
+class cl_event_reciever IMPLEMENTATION.
+
+  method handle_top_of_page.
+    DATA: lv_text type SDYDO_TEXT_ELEMENT.
+
+    lv_text = 'FLIGHT DETAILS'.
+
+    call method GO_DOCU->ADD_TEXT
+      EXPORTING
+        TEXT      = lv_text
+        SAP_STYLE = CL_DD_DOCUMENT=>HEADING.
+    call method go_docu->NEW_LINE.
+
+    clear:lv_text.
+
+    CONCATENATE 'User: ' sy-uname into lv_text SEPARATED BY space.
+    call method GO_DOCU->ADD_TEXT
+      EXPORTING
+        TEXT         = lv_text            " Single Text, Up To 255 Characters Long
+        SAP_COLOR    = CL_DD_DOCUMENT=>LIST_POSITIVE          " Not Release 99
+        SAP_FONTSIZE = CL_DD_DOCUMENT=>MEDIUM.            " Recommended Font Sizes
+
+    call method GO_DOCU->DISPLAY_DOCUMENT
+      EXPORTING
+        PARENT = go_sub1.               " Contain Object Already Exists
+
+
+  ENDMETHOD.
+  method handle_hotspot_click.
+    BREAK-POINT.
+  ENDMETHOD.
+  method handle_double_click.
+    BREAK-POINT.
+  ENDMETHOD.
+  method handle_data_changed.
+    BREAK-POINT.
+  ENDMETHOD.
+  method handle_onf4.
+    BREAK-POINT.
+  ENDMETHOD.
+
+endclass.

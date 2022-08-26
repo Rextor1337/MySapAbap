@@ -1,0 +1,27 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_SELECT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_SELECT.
+
+DATA: gt_scarr type table of scarr,
+      gs_scarr type scarr.
+
+START-OF-SELECTION.
+
+*  select * from scarr
+*    into table gt_scarr
+*    where CARRID eq 'AC'.
+*
+*    read TABLE gt_scarr into gs_scarr index 1.
+*
+*    write: gs_scarr-CURRCODE.
+
+SELECT * UP TO 1 ROWS from scarr
+  INTO TABLE GT_scarr
+  where CARRID eq 'AC'.
+
+    read TABLE gt_scarr into gs_scarr index 1.
+
+    write: gs_scarr-CURRCODE.

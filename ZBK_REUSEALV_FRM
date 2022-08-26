@@ -1,0 +1,365 @@
+FORM GET_DATA .
+  select
+  ekko~ebeln
+  ekpo~ebelp
+  ekko~bstyp
+  ekko~bsart
+  ekpo~matnr
+  ekpo~menge
+  ekpo~meins
+  from ekko
+  INNER JOIN ekpo on ekpo~ebeln eq ekko~ebeln
+  into CORRESPONDING FIELDS OF table gt_list.
+
+  LOOP AT GT_LIST INTO GS_LIST.
+    IF gs_list-ebelp eq '10'.
+      clear:GS_CELL_COLOR.
+      GS_CELL_COLOR-fieldname = 'MATNR'.
+      GS_CELL_COLOR-color-col = 4.
+      GS_CELL_COLOR-color-int = 1.
+      GS_CELL_COLOR-color-inv = 0.
+      append GS_CELL_COLOR to gs_list-CELL_COLOR.
+      modify gt_list from gs_list.
+
+      clear:GS_CELL_COLOR.
+      GS_CELL_COLOR-fieldname = 'EBELP'.
+      GS_CELL_COLOR-color-col = 5.
+      GS_CELL_COLOR-color-int = 0.
+      GS_CELL_COLOR-color-inv = 0.
+      append GS_CELL_COLOR to gs_list-CELL_COLOR.
+      modify gt_list from gs_list.
+
+    endif.
+
+*     IF gs_list-ebelp eq '20'.
+*      clear:GS_CELL_COLOR.
+*      GS_CELL_COLOR-fieldname = 'BSTYP'.
+*      GS_CELL_COLOR-color-col = 6.
+*      GS_CELL_COLOR-color-int = 1.
+*      GS_CELL_COLOR-color-inv = 0.
+*      append GS_CELL_COLOR to gs_list-CELL_COLOR.
+*      modify gt_list from gs_list.
+
+
+
+*    endif.
+
+
+*    if gs_list-ebelp eq '10'.
+*      gs_list-line_color = 'c301'.
+*      modify gt_list from gs_list.
+    if gs_list-ebelp eq '20'.
+      gs_list-line_color = 'c710'.
+      modify gt_list from gs_list.
+*    elseif gs_list-ebelp eq '30'.
+*      gs_list-line_color = 'c600'.
+*      modify gt_list from gs_list.
+    endif.
+  endloop.
+
+ENDFORM.
+
+FORM GET_FC .
+*
+*  CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+*    EXPORTING
+*      I_PROGRAM_NAME   = sy-repid
+*     I_INTERNAL_TABNAME  = 'GT_LIST'
+*      I_STRUCTURE_NAME = 'ZBK_REUSEALV_S'
+*      I_INCLNAME       = sy-repid
+*    CHANGING
+*      CT_FIELDCAT      = gt_fieldcatalog.
+
+
+
+  perform: set_fc_sub using 'EBELN' 'SAS NO' 'SAS NO' 'SAS.' ABAP_TRUE '0' '' 'X',
+           set_fc_sub using 'EBELP' 'KALEM' 'KALEM' 'KALEM' ABAP_TRUE '1' '' '',
+           set_fc_sub using 'BSTYP' 'BEL' 'BELGE TIPI' 'BELGE T.' ABAP_FALSE '2' '' '',
+           set_fc_sub using 'BSART' 'BELG' 'BELGE TURU' 'BEL. TU.' ABAP_FALSE '3' '' '',
+           set_fc_sub using 'MATNR' 'MAL' 'MALZEME' 'MAL.' ABAP_FALSE '4' '' 'X',
+           set_fc_sub using 'MENGE' 'MIKTAR' 'MIKTAR' 'M.' ABAP_FALSE '5' 'X' '',
+           set_fc_sub using 'MEINS' 'OLCU B' 'OLCU BIR.' 'OLCU B.' ABAP_FALSE '6' '' ''.
+
+ENDFORM.
+FORM SET_FC_SUB using p_fieldname
+                      p_seltext_s
+                      p_seltext_m
+                      p_seltext_l
+                      p_key
+                      p_col_pos
+                      p_do_sum
+                      p_hotspot.
+
+  clear:gs_fieldcatalog.
+  gs_fieldcatalog-FIELDNAME = p_fieldname.
+  gs_fieldcatalog-SELTEXT_s = p_seltext_s.
+  gs_fieldcatalog-SELTEXT_M = p_seltext_m.
+  gs_fieldcatalog-SELTEXT_l = p_seltext_l.
+  gs_fieldcatalog-KEY       = p_key.
+  gs_fieldcatalog-col_pos   = p_col_pos.
+  gs_fieldcatalog-do_sum   = p_do_sum.
+  GS_FIELDCATALOG-hotspot  =  p_hotspot.
+  append gs_fieldcatalog to gt_fieldcatalog.
+endform.
+
+
+FORM gET_LAYOUT .
+  gs_layout-WINDOW_TITLEBAR = 'REUSE ALV DENEME'.
+  gs_layout-zebra = abap_true.
+  gs_layout-COLWIDTH_OPTIMIZE = abap_true.
+  gs_layout-BOX_FIELDNAME = 'SELKZ'.
+  gs_layout-INFO_FIELDNAME = 'LINE_COLOR'.
+  gs_layout-COLTAB_FIELDNAME = 'CELL_COLOR'.
+*  gs_layout-edit = abap_true.
+
+ENDFORM.
+
+FORM DISPLAY_ALV .
+  gs_event-name = SLIS_EV_TOP_OF_PAGE.
+  gs_event-form = 'TOP_OF_PAGE'.
+  append gs_event to gt_events.
+  gs_event-name = SLIS_EV_END_OF_LIST.
+  gs_event-form = 'END_OF_PAGE'.
+  append gs_event to gt_events.
+*  gs_event-name = SLIS_EV_PF_STATUS_SET.
+*  gs_event-form = 'PF_STATUS_SET'.
+*  append gs_event to gt_events.
+
+*  gs_exclude-FCODE = '&UMC'.
+*  append gs_exclude to gt_exclude.
+*
+*  gs_exclude-FCODE = '&INFO'.
+*  append gs_exclude to gt_exclude.
+*
+*  gs_sort-SPOS    = 1.
+*  gs_sort-TABNAME = 'GT_LIST'.
+*  gs_sort-FIELDNAME = 'BSART'.
+*  gs_sort-DOWN = abap_true.
+*  append gs_sort to gt_sort.
+*
+*  gs_sort-SPOS    = 2.
+*  gs_sort-TABNAME = 'GT_LIST'.
+*  gs_sort-FIELDNAME = 'MENGE'.
+*  gs_sort-up = abap_true.
+*  append gs_sort to gt_sort.
+*
+*  gs_filter-TABNAME = 'GT_LIST'.
+*  gs_filter-fieldname = 'EBELP'.
+*  gs_filter-sign0 = 'I'.
+*  gs_filter-OPTIO = 'EQ'.
+*  gs_filter-VALUF_INT = 20.
+*  append GS_FILTER to gt_filter.
+*
+*  gs_filter-TABNAME = 'GT_LIST'.
+*  gs_filter-fieldname = 'MEINS'.
+*  gs_filter-sign0 = 'I'.
+*  gs_filter-OPTIO = 'EQ'.
+*  gs_filter-VALUF_INT = 'KG'.
+*  append GS_FILTER to gt_filter.
+
+  gs_variant-VARIANT = p_vari.
+
+  CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
+    EXPORTING
+*     I_INTERFACE_CHECK       = ' '
+*     I_BYPASSING_BUFFER      =
+*     I_BUFFER_ACTIVE         = ' '
+      I_CALLBACK_PROGRAM      = sy-repid
+*     I_CALLBACK_PF_STATUS_SET       = ' '
+      I_CALLBACK_USER_COMMAND = 'USER_COMMAND'
+*     I_STRUCTURE_NAME        =
+      IS_LAYOUT               = gs_layout
+      IT_FIELDCAT             = gt_fieldcatalog
+      IT_EXCLUDING            = gt_exclude
+*     IT_SPECIAL_GROUPS       =
+      IT_SORT                 = gt_sort
+      IT_FILTER               = gt_filter
+*     IS_SEL_HIDE             =
+*     I_DEFAULT               = 'X'
+*     I_SAVE                  = ' '
+*     IS_VARIANT              =
+      IT_EVENTS               = gt_events
+*     IT_EVENT_EXIT           =
+*     IS_PRINT                =
+*     IS_REPREP_ID            =
+*     I_SCREEN_START_COLUMN   = 0
+*     I_SCREEN_START_LINE     = 0
+*     I_SCREEN_END_COLUMN     = 0
+*     I_SCREEN_END_LINE       = 0
+*     IR_SALV_LIST_ADAPTER    =
+*     IT_EXCEPT_QINFO         =
+*     I_SUPPRESS_EMPTY_DATA   = ABAP_FALSE
+*   IMPORTING
+*     E_EXIT_CAUSED_BY_CALLER =
+*     ES_EXIT_CAUSED_BY_USER  =
+    TABLES
+      T_OUTTAB                = gt_list
+*   EXCEPTIONS
+*     PROGRAM_ERROR           = 1
+*     OTHERS                  = 2
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+
+*  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+*    EXPORTING
+**     I_INTERFACE_CHECK       = ' '
+**     I_BYPASSING_BUFFER      = ' '
+**     I_BUFFER_ACTIVE         = ' '
+*      I_CALLBACK_PROGRAM      = sy-repid
+**     I_CALLBACK_PF_STATUS_SET = 'PF_STATUS_SET'
+*      I_CALLBACK_USER_COMMAND = 'USER_COMMAND'
+**     I_CALLBACK_TOP_OF_PAGE  = 'TOP_OF_PAGE'
+**     I_CALLBACK_HTML_TOP_OF_PAGE       = ' '
+**     I_CALLBACK_HTML_END_OF_LIST       = ' '
+**     I_STRUCTURE_NAME        =
+**     I_BACKGROUND_ID         = ' '
+**     I_GRID_TITLE            =
+**     I_GRID_SETTINGS         =
+*      IS_LAYOUT               = gs_layout
+*      IT_FIELDCAT             = gt_fieldcatalog
+*      IT_EXCLUDING            = gt_exclude
+**     IT_SPECIAL_GROUPS       =
+*      IT_SORT                 = gt_sort
+*      IT_FILTER               = gt_filter
+**     IS_SEL_HIDE             =
+**     I_DEFAULT               = 'X'
+*      I_SAVE                  = 'A'
+*      IS_VARIANT              = gs_variant
+*      IT_EVENTS               = gt_events
+**     IT_EVENT_EXIT           =
+**     IS_PRINT                =
+**     IS_REPREP_ID            =
+*      I_SCREEN_START_COLUMN   = 40
+*      I_SCREEN_START_LINE     = 5
+*      I_SCREEN_END_COLUMN     = 100
+*      I_SCREEN_END_LINE       = 20
+**     I_HTML_HEIGHT_TOP       = 0
+**     I_HTML_HEIGHT_END       = 0
+**     IT_ALV_GRAPHICS         =
+**     IT_HYPERLINK            =
+**     IT_ADD_FIELDCAT         =
+**     IT_EXCEPT_QINFO         =
+**     IR_SALV_FULLSCREEN_ADAPTER        =
+**     O_PREVIOUS_SRAL_HANDLER =
+** IMPORTING
+**     E_EXIT_CAUSED_BY_CALLER =
+**     ES_EXIT_CAUSED_BY_USER  =
+*    TABLES
+*      T_OUTTAB                = gt_list
+** EXCEPTIONS
+**     PROGRAM_ERROR           = 1
+**     OTHERS                  = 2
+*    .
+*  IF SY-SUBRC <> 0.
+** Implement suitable error handling here
+*  ENDIF.
+
+ENDFORM.
+
+
+
+FORM TOP_OF_PAGE.
+
+  DATA: lt_header type SLIS_T_LISTHEADER,
+        ls_header type slis_listheader.
+  DAta: lv_date type char10.
+  DATA: lv_lines   type i,
+        lv_lines_c type char4.
+
+  clear:ls_header.
+  ls_header-TYP = 'H'.
+  ls_header-INFO = 'Satin alma siparis raporu'.
+  append ls_header to lt_header.
+
+*  clear:ls_header.
+*  ls_header-TYP = 'S'.
+*  ls_header-key = 'Tarih:'.
+**  ls_header-INFO = '14.05.2022'.
+*  CONCATENATE sy-datum+6(2)
+*  '.'
+*  sy-datum+4(2)
+*  '.'
+*  sy-datum+0(4)
+*  into lv_date.
+*  ls_header-INFO = lv_date.
+*  append ls_header to lt_header.
+
+  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+    EXPORTING
+      IT_LIST_COMMENTARY = lt_header.
+
+endform.
+
+form END_OF_PAGE.
+
+  DATA: lt_header type SLIS_T_LISTHEADER,
+        ls_header type slis_listheader.
+  DAta: lv_date type char10.
+  DATA: lv_lines   type i,
+        lv_lines_c type char4.
+
+  clear:ls_header.
+  DESCRIBE TABLE gt_list lines lv_lines.
+  LV_LINES_C = lv_lines.
+
+  ls_header-TYP = 'A'.
+*  ls_header-INFO = 'Raporda 50 adet kalem vardir'.
+  CONCATENATE 'Raporda'
+              lv_lines_c
+              'adet kalem vardir.'
+              into ls_header-info
+              SEPARATED BY space.
+  append ls_header to lt_header.
+
+  DESCRIBE TABLE gt_list lines lv_lines.
+
+
+  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+    EXPORTING
+      IT_LIST_COMMENTARY = lt_header.
+
+endform.
+
+FORM PF_STATUS_SET using p_extab type SLIS_T_EXTAB.
+
+  set pf-status '0200'.
+
+ENDFORM.
+
+
+FORM USER_COMMAND using p_ucomm     type sy-ucomm
+                        ps_selfield type SLIS_SELFIELD.
+  DATA:lv_mes type char200,
+       lv_ind type numc2.
+
+  CASE p_ucomm.
+    when '&MSG'.
+      loop at gt_list into gs_list where selkz eq 'X'.
+        lv_ind = lv_ind + 1.
+      endloop.
+      CONCATENATE lv_ind
+      'sayi kadar satir secilmistir.'
+      into lv_mes
+      separated by space.
+      message lv_mes type 'I'.
+    when '&IC1'.
+      case ps_selfield-fieldname.
+        when 'EBELN'.
+          CONCATENATE PS_SELFIELD-value
+          'numarali SAS tiklanmistir.'
+          into lv_mes
+          separated by space.
+          message lv_mes type 'I'.
+        when 'MATNR'.
+          CONCATENATE PS_SELFIELD-value
+          'numarali Malzeme tiklanmistir.'
+          into lv_mes
+          separated by space.
+          message lv_mes type 'I'.
+      endcase.
+*      message 'Double Click Basildi' type 'I'.
+  endcase.
+ENDFORM.

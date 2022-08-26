@@ -1,0 +1,40 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_MESSAGES
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_MESSAGES message-id zmes.
+
+
+START-OF-SELECTION.
+
+*MESSAGE 'HELLO WORLD' TYPE 'S'.
+*MESSAGE 'HELLO WORLD' TYPE 'I'.
+*MESSAGE 'HELLO WORLD' TYPE 'W'.
+*MESSAGE 'HELLO WORLD' TYPE 'E'.
+*MESSAGE 'HELLO WORLD' TYPE 'A'.
+*MESSAGE 'HELLO WORLD' TYPE 'X'.
+
+*MESSAGE 'HELLO WORLD' TYPE 'S' DISPLAY LIKE 'W'.
+*MESSAGE 'HELLO WORLD' TYPE 'I'.
+*MESSAGE 'HELLO WORLD' TYPE 'W'.
+*MESSAGE 'HELLO WORLD' TYPE 'E'.
+*MESSAGE 'HELLO WORLD' TYPE 'A'.
+*MESSAGE 'HELLO WORLD' TYPE 'X'.
+
+*MESSAGE TEXT-000 TYPE 'I'.
+
+*MESSAGE a000(ZMES).
+
+*message i000.
+*message i001.
+
+  DATA: iv_gun type char20.
+
+
+  iv_gun = '3'.
+
+message i001 with 'sonraki'.
+message i002 with '1'  iv_gun .
+
+WRITE: 'MESAJLAR'.

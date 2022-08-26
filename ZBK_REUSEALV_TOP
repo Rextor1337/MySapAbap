@@ -1,0 +1,54 @@
+*&---------------------------------------------------------------------*
+*& Include          ZBK_REUSEALV_TOP
+*&---------------------------------------------------------------------*
+
+* DATA: begin of gt_list occurs 0,
+*    ebeln like ekko-EBELN,
+*   ebelp like ekpo-ebelp,
+*   bstyp like ekko-bstyp,
+*   bsart like ekko-bsart,
+*   matnr like ekpo-matnr,
+*   menge like ekpo-menge,
+*   meins like ekpo-meins,
+*   statu like ekpo-statu,
+*   END OF GT_LIST.
+
+ TYPES: BEGIN OF gty_list,
+          selkz      type char1,
+          ebeln      type EBELN,
+          ebelp      type ebelp,
+          bstyp      type ebstyp,
+          bsart      type esart,
+          matnr      type matnr,
+          menge      type BSTMG,
+          meins      type meins,
+          line_color type char4,
+          cell_color type SLIS_T_SPECIALCOL_ALV,
+        END OF GTY_LIST.
+
+ DATA: gs_cell_color type SLIS_SPECIALCOL_ALV.
+
+ DATA: gt_list type table of GTY_LIST.
+ DATA: gs_list type gty_list.
+ DATA: gt_fieldcatalog type SLIS_T_FIELDCAT_ALV,
+       gs_fieldcatalog type SLIS_FIELDCAT_ALV.
+ DATA: gs_layout type SLIS_LAYOUT_ALV.
+
+ DATA: gt_events type SLIS_T_EVENT,
+       gs_event  type slis_alv_event.
+
+ DATA: gt_exclude type SLIS_T_EXTAB,
+       gs_exclude type slis_extab.
+
+ DATA: gt_sort type SLIS_T_SORTINFO_ALV,
+       gs_sort type slis_sortinfo_alv.
+
+ DATA: gt_filter type SLIS_T_FILTER_ALV,
+       gs_filter type slis_filter_alv.
+
+ DATA: gs_variant type disvariant.
+
+ DATA: gs_variant_get type disvariant,
+       gv_exit type char1.
+
+ PARAMETERS: p_vari type  disvariant-VARIANT.

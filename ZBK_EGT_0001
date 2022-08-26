@@ -1,0 +1,25 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_EGT_0001
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_EGT_0001.
+
+DATA gv_desg1 TYPE p DECIMALS 2.
+DATA gv_desg2 TYPE int4.
+DATA gv_desg3 TYPE n.
+DATA gv_desg4 type c.
+DATA gv_desg5 type string.
+
+gv_desg1 = '12.54'.
+gv_desg1 = '12.5466'.
+
+gv_desg2 = 12.
+gv_desg1 = 1288.
+
+gv_desg3 = 12.
+
+gv_desg4 = 'A'.
+gv_desg4 = 'C'.
+
+gv_desg5 = 'Deneme'.

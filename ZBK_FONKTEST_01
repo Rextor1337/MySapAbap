@@ -1,0 +1,25 @@
+*&---------------------------------------------------------------------*
+*& Report ZBK_FONKTEST_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZBK_FONKTEST_01.
+DATA:
+      gv_num1 TYPE int2,
+      gv_num2 type int2,
+      gv_sonuc type int2.
+
+
+START-OF-SELECTION.
+
+gv_num1 = 20.
+gv_num2 = 2.
+
+CALL FUNCTION 'Z_BK_FONK_01'
+ exporting
+  iv_num1        = gv_num1
+  iv_num2        = gv_num2
+ importing
+   ev_sonuc      = gv_sonuc.
+
+WRITE:  'Sonuc:' , gv_sonuc.
